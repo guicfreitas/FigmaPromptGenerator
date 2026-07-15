@@ -203,6 +203,7 @@ private struct SettingsView: View {
     @AppStorage("temperature") private var temperature = 0.3
     @AppStorage("maxTokens") private var maxTokens = 4000
     @State private var saved = false
+    @State private var saveError: String?
 
     var body: some View {
         Form {
@@ -212,7 +213,18 @@ private struct SettingsView: View {
                     Text("GPT-5").tag("gpt-5"); Text("GPT-5 Mini").tag("gpt-5-mini")
                 }
                 Button(saved ? "Saved to Keychain" : "Save API Key") {
-                    try? KeychainService.saveAPIKey(apiKey); saved = true
+                    do {
+                        try KeychainService.saveAPIKey(apiKey)
+                        apiKey = apiKey.trimmingCharacters(in: .whitespacesAndNewlines)
+                        saved = true
+                        saveError = nil
+                    } catch {
+                        saved = false
+                        saveError = error.localizedDescription
+                    }
+                }
+                if let saveError {
+                    Text(saveError).font(.caption).foregroundStyle(.red)
                 }
             }
             Section("Generation") {
