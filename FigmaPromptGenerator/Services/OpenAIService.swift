@@ -26,7 +26,7 @@ struct OpenAIService {
         Optional notes:
         \(notes.isEmpty ? "Not provided." : notes)
         """
-        let body: [String: Any] = [
+        var body: [String: Any] = [
             "model": model,
             "instructions": systemInstructions,
             "input": [[
@@ -36,9 +36,11 @@ struct OpenAIService {
                     ["type": "input_image", "image_url": imageURL]
                 ]
             ]],
-            "temperature": temperature,
             "max_output_tokens": maxTokens
         ]
+        if !model.lowercased().hasPrefix("gpt-5") {
+            body["temperature"] = temperature
+        }
         var request = URLRequest(url: URL(string: "https://api.openai.com/v1/responses")!)
         request.httpMethod = "POST"
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
