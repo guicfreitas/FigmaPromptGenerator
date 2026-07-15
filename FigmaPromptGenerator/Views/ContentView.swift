@@ -112,6 +112,20 @@ private struct GeneratorView: View {
             }
             .buttonStyle(GenerateButtonStyle())
             .disabled(viewModel.isGenerating)
+            if viewModel.isGenerating {
+                HStack(spacing: 10) {
+                    ProgressView().controlSize(.small)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(viewModel.generationStatus).font(.subheadline.weight(.medium))
+                        Text("The API is working on your prompt. Keep this window open.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .padding(12)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(RoundedRectangle(cornerRadius: 10).fill(AppTheme.card))
+            }
         }
     }
 

@@ -13,6 +13,7 @@ final class PromptGeneratorViewModel: ObservableObject {
     @Published var selectedTemplate: PromptTemplate = .generic
     @Published var prompt = ""
     @Published var isGenerating = false
+    @Published var generationStatus = ""
     @Published var errorMessage: String?
     @AppStorage("model") var model = "gpt-5"
     @AppStorage("temperature") var temperature = 0.3
@@ -23,23 +24,25 @@ final class PromptGeneratorViewModel: ObservableObject {
             errorMessage = "That file is not a readable image."
             return
         }
-        imageData = data
+        guard let optimizedData = image.resizedJPEGData(maxDimension: 2_048) else {
+            errorMessage = "The selected image could not be prepared for OpenAI."
+            return
+        }
+        imageData = optimizedData
         self.image = image
-        imageMimeType = mimeType(for: url.pathExtension)
+        imageMimeType = "image/jpeg"
     }
 
     func pasteImage() {
         let board = NSPasteboard.general
         guard let image = NSImage(pasteboard: board),
-              let tiffData = image.tiffRepresentation,
-              let bitmap = NSBitmapImageRep(data: tiffData),
-              let pngData = bitmap.representation(using: .png, properties: [:]) else {
-            errorMessage = "The clipboard image could not be converted to PNG."
+              let optimizedData = image.resizedJPEGData(maxDimension: 2_048) else {
+            errorMessage = "The clipboard image could not be prepared for OpenAI."
             return
         }
-        imageData = pngData
+        imageData = optimizedData
         self.image = image
-        imageMimeType = "image/png"
+        imageMimeType = "image/jpeg"
     }
 
     func chooseImage() {
@@ -56,9 +59,11 @@ final class PromptGeneratorViewModel: ObservableObject {
             return
         }
         isGenerating = true
+        generationStatus = "Preparing your Figma reference…"
         errorMessage = nil
         defer { isGenerating = false }
         do {
+            generationStatus = "Analyzing the design with \(model)…"
             let output = try await OpenAIService().generate(
                 apiKey: KeychainService.readAPIKey(),
                 model: model,
@@ -71,6 +76,7 @@ final class PromptGeneratorViewModel: ObservableObject {
                 maxTokens: maxTokens
             )
             prompt = output
+            generationStatus = "Prompt ready."
             let item = PromptHistoryItem(
                 title: output.titleLine(fallback: selectedTemplate.rawValue),
                 prompt: output,
@@ -80,6 +86,7 @@ final class PromptGeneratorViewModel: ObservableObject {
             modelContext.insert(item)
             try? modelContext.save()
         } catch {
+            generationStatus = "Generation failed."
             errorMessage = error.localizedDescription
         }
     }
@@ -95,14 +102,6 @@ final class PromptGeneratorViewModel: ObservableObject {
         panel.nameFieldStringValue = "figma-implementation-prompt.\(asMarkdown ? "md" : "txt")"
         guard panel.runModal() == .OK, let url = panel.url else { return }
         try? prompt.write(to: url, atomically: true, encoding: .utf8)
-    }
-
-    private func mimeType(for extension: String) -> String {
-        switch `extension`.lowercased() {
-        case "jpg", "jpeg": "image/jpeg"
-        case "webp": "image/webp"
-        default: "image/png"
-        }
     }
 }
 

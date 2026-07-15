@@ -2,12 +2,13 @@ import Foundation
 
 struct OpenAIService {
     enum ServiceError: LocalizedError {
-        case missingAPIKey, invalidImage, invalidResponse, api(String)
+        case missingAPIKey, invalidImage, invalidResponse, timedOut, api(String)
         var errorDescription: String? {
             switch self {
             case .missingAPIKey: "Add an OpenAI API key in Settings before generating."
             case .invalidImage: "The selected image could not be encoded."
             case .invalidResponse: "OpenAI returned an unreadable response."
+            case .timedOut: "OpenAI did not respond within 90 seconds. Try a smaller screenshot or a shorter CSS block, then try again."
             case .api(let message): message
             }
         }
@@ -43,10 +44,21 @@ struct OpenAIService {
         }
         var request = URLRequest(url: URL(string: "https://api.openai.com/v1/responses")!)
         request.httpMethod = "POST"
+        request.timeoutInterval = 90
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
-        let (data, response) = try await URLSession.shared.data(for: request)
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.timeoutIntervalForRequest = 90
+        configuration.timeoutIntervalForResource = 120
+        let session = URLSession(configuration: configuration)
+        let data: Data
+        let response: URLResponse
+        do {
+            (data, response) = try await session.data(for: request)
+        } catch let error as URLError where error.code == .timedOut {
+            throw ServiceError.timedOut
+        }
         guard let http = response as? HTTPURLResponse else { throw ServiceError.invalidResponse }
         guard 200..<300 ~= http.statusCode else {
             let message = (try? JSONSerialization.jsonObject(with: data) as? [String: Any])?["error"] as? [String: Any]
