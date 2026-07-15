@@ -41,8 +41,9 @@ struct ContentView: View {
                 Text("Built for Figma → code").font(.caption).foregroundStyle(.secondary)
             }
             .padding(18)
-            .frame(minWidth: 210)
+            .frame(width: 230)
             .background(AppTheme.deepGreen)
+            .navigationSplitViewColumnWidth(min: 230, ideal: 230, max: 230)
         } detail: {
             Group {
                 switch screen {
