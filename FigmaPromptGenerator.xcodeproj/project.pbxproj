@@ -1,0 +1,358 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		3684A3632F5930BD4F64DAD6 /* OpenAIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C20AB478E7CBC1C40F720C1 /* OpenAIService.swift */; };
+		522A33DCD4BA78786F4AA5CD /* FigmaPromptGeneratorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4CB322525C5A377B517BC59 /* FigmaPromptGeneratorApp.swift */; };
+		535AA1F9C49EEA7B30CC34E0 /* AppComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58B65455C867E4CD716DECB7 /* AppComponents.swift */; };
+		7A9C0AFC4518E0849F37AF88 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39115B4203D8BA3C237D7B22 /* ContentView.swift */; };
+		AF3F14C5EBCB9820A5F03B35 /* PromptGeneratorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D86AC0A5FAA6DBCE18E638 /* PromptGeneratorViewModel.swift */; };
+		DF560EA29896B82A090AFC88 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7717E16AD29D3B894A8CC89B /* KeychainService.swift */; };
+		E45F7D940ADDE9C74623D73D /* PromptHistoryItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BEC5BCAE70D106DC4C8E86 /* PromptHistoryItem.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		08BEC5BCAE70D106DC4C8E86 /* PromptHistoryItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptHistoryItem.swift; sourceTree = "<group>"; };
+		1C67D87DE59B48F85A4E2D17 /* FigmaPromptGenerator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FigmaPromptGenerator.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		39115B4203D8BA3C237D7B22 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		58B65455C867E4CD716DECB7 /* AppComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppComponents.swift; sourceTree = "<group>"; };
+		6C20AB478E7CBC1C40F720C1 /* OpenAIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIService.swift; sourceTree = "<group>"; };
+		7717E16AD29D3B894A8CC89B /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
+		8AF3AE3D65CF666199DFB3DD /* FigmaPromptGenerator.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FigmaPromptGenerator.entitlements; sourceTree = "<group>"; };
+		99EB905DFC7129CB58D1A176 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		B4CB322525C5A377B517BC59 /* FigmaPromptGeneratorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FigmaPromptGeneratorApp.swift; sourceTree = "<group>"; };
+		E6D86AC0A5FAA6DBCE18E638 /* PromptGeneratorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptGeneratorViewModel.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		00E8A26B33F5FA622EECC1D3 /* FigmaPromptGenerator */ = {
+			isa = PBXGroup;
+			children = (
+				8AF3AE3D65CF666199DFB3DD /* FigmaPromptGenerator.entitlements */,
+				99EB905DFC7129CB58D1A176 /* Info.plist */,
+				679C9BAB136A45608197AFF7 /* App */,
+				3140488B16D29CDDEB00815B /* Components */,
+				24E80FDCDA372BDBB92A2842 /* Models */,
+				89D873FAEF20FA603E7888AA /* Services */,
+				F0A32720E1F111267065C8D5 /* ViewModels */,
+				D3BAC03A11FD331A98E47FA0 /* Views */,
+			);
+			path = FigmaPromptGenerator;
+			sourceTree = "<group>";
+		};
+		24E80FDCDA372BDBB92A2842 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				08BEC5BCAE70D106DC4C8E86 /* PromptHistoryItem.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		3140488B16D29CDDEB00815B /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				58B65455C867E4CD716DECB7 /* AppComponents.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		679C9BAB136A45608197AFF7 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				B4CB322525C5A377B517BC59 /* FigmaPromptGeneratorApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		7589381B2DEF7845EA2DDAA3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1C67D87DE59B48F85A4E2D17 /* FigmaPromptGenerator.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		89D873FAEF20FA603E7888AA /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				7717E16AD29D3B894A8CC89B /* KeychainService.swift */,
+				6C20AB478E7CBC1C40F720C1 /* OpenAIService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		D3BAC03A11FD331A98E47FA0 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				39115B4203D8BA3C237D7B22 /* ContentView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		F0A32720E1F111267065C8D5 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				E6D86AC0A5FAA6DBCE18E638 /* PromptGeneratorViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		FC52C03502DC66B40BFD707C = {
+			isa = PBXGroup;
+			children = (
+				00E8A26B33F5FA622EECC1D3 /* FigmaPromptGenerator */,
+				7589381B2DEF7845EA2DDAA3 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4FC9B3EFA3785340A6D273CC /* FigmaPromptGenerator */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 17938BF0094FBAEAC2803B82 /* Build configuration list for PBXNativeTarget "FigmaPromptGenerator" */;
+			buildPhases = (
+				29CFA0C4BA52713F0261D2CB /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FigmaPromptGenerator;
+			packageProductDependencies = (
+			);
+			productName = FigmaPromptGenerator;
+			productReference = 1C67D87DE59B48F85A4E2D17 /* FigmaPromptGenerator.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		9E6E1FF0EF4C613ED03E906F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+			};
+			buildConfigurationList = D1FD29EB0A8327E9D55CE793 /* Build configuration list for PBXProject "FigmaPromptGenerator" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = FC52C03502DC66B40BFD707C;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4FC9B3EFA3785340A6D273CC /* FigmaPromptGenerator */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		29CFA0C4BA52713F0261D2CB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				535AA1F9C49EEA7B30CC34E0 /* AppComponents.swift in Sources */,
+				7A9C0AFC4518E0849F37AF88 /* ContentView.swift in Sources */,
+				522A33DCD4BA78786F4AA5CD /* FigmaPromptGeneratorApp.swift in Sources */,
+				DF560EA29896B82A090AFC88 /* KeychainService.swift in Sources */,
+				3684A3632F5930BD4F64DAD6 /* OpenAIService.swift in Sources */,
+				AF3F14C5EBCB9820A5F03B35 /* PromptGeneratorViewModel.swift in Sources */,
+				E45F7D940ADDE9C74623D73D /* PromptHistoryItem.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		02A5130F013587081AB04A9B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.guilherme.FigmaPromptGenerator;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		5037AFFDAC6FC3C73AF79D2A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "";
+				CODE_SIGN_ENTITLEMENTS = FigmaPromptGenerator/FigmaPromptGenerator.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = FigmaPromptGenerator/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_NAME = "Figma Prompt Generator";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		78357A11768707BDA411F9D3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "";
+				CODE_SIGN_ENTITLEMENTS = FigmaPromptGenerator/FigmaPromptGenerator.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = FigmaPromptGenerator/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_NAME = "Figma Prompt Generator";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		C5440861A4E0C17EB4473997 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.guilherme.FigmaPromptGenerator;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		17938BF0094FBAEAC2803B82 /* Build configuration list for PBXNativeTarget "FigmaPromptGenerator" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				78357A11768707BDA411F9D3 /* Debug */,
+				5037AFFDAC6FC3C73AF79D2A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		D1FD29EB0A8327E9D55CE793 /* Build configuration list for PBXProject "FigmaPromptGenerator" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				02A5130F013587081AB04A9B /* Debug */,
+				C5440861A4E0C17EB4473997 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 9E6E1FF0EF4C613ED03E906F /* Project object */;
+}
