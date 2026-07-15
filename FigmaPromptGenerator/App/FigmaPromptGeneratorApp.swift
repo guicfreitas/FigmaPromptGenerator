@@ -12,7 +12,7 @@ struct FigmaPromptGeneratorApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .frame(minWidth: 1_100, minHeight: 720)
+                .frame(minWidth: 820, minHeight: 640)
         }
         .modelContainer(sharedModelContainer)
         .commands {

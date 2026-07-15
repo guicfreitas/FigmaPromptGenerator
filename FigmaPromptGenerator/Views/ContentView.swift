@@ -70,27 +70,48 @@ private struct GeneratorView: View {
     @State private var rawText = false
 
     var body: some View {
+        GeometryReader { proxy in
+            if proxy.size.width < 900 {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 20) {
+                        inputPanel
+                        promptPanel(rawText: $rawText)
+                            .frame(minHeight: 420)
+                    }
+                    .padding(18)
+                }
+            } else {
+                wideLayout
+            }
+        }
+    }
+
+    private var wideLayout: some View {
         HSplitView {
             ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-                    header
-                    ImageDropZone(viewModel: viewModel)
-                    LabeledEditor(title: "Figma Inspect CSS", placeholder: "Paste CSS, design tokens, or inspection output…", text: $viewModel.css, font: .system(.body, design: .monospaced))
-                    LabeledEditor(title: "Notes", placeholder: "Add context, interactions, component reuse guidance…", text: $viewModel.notes)
-                    Button {
-                        Task { await viewModel.generate(using: modelContext) }
-                    } label: {
-                        Label(viewModel.isGenerating ? "Generating…" : "Generate Prompt", systemImage: "sparkles")
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(GenerateButtonStyle())
-                    .disabled(viewModel.isGenerating)
-                }
+                inputPanel
                 .padding(28)
             }
             .frame(minWidth: 470)
             promptPanel(rawText: $rawText)
                 .frame(minWidth: 450)
+        }
+    }
+
+    private var inputPanel: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            header
+            ImageDropZone(viewModel: viewModel)
+            LabeledEditor(title: "Figma Inspect CSS", placeholder: "Paste CSS, design tokens, or inspection output…", text: $viewModel.css, font: .system(.body, design: .monospaced))
+            LabeledEditor(title: "Notes", placeholder: "Add context, interactions, component reuse guidance…", text: $viewModel.notes)
+            Button {
+                Task { await viewModel.generate(using: modelContext) }
+            } label: {
+                Label(viewModel.isGenerating ? "Generating…" : "Generate Prompt", systemImage: "sparkles")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(GenerateButtonStyle())
+            .disabled(viewModel.isGenerating)
         }
     }
 
