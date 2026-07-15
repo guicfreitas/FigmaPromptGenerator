@@ -102,7 +102,7 @@ private struct GeneratorView: View {
         VStack(alignment: .leading, spacing: 16) {
             header
             ImageDropZone(viewModel: viewModel)
-            LabeledEditor(title: "Figma Inspect CSS", placeholder: "Paste CSS, design tokens, or inspection output…", text: $viewModel.css, font: .system(.body, design: .monospaced))
+            LabeledEditor(title: "Figma Inspect CSS", placeholder: "Paste CSS, design tokens, or inspection output…", text: $viewModel.css, font: .system(.body, design: .monospaced), height: 240)
             LabeledEditor(title: "Notes", placeholder: "Add context, interactions, component reuse guidance…", text: $viewModel.notes)
             Button {
                 Task { await viewModel.generate(using: modelContext) }

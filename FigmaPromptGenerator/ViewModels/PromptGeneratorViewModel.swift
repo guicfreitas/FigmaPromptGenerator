@@ -31,13 +31,15 @@ final class PromptGeneratorViewModel: ObservableObject {
     func pasteImage() {
         let board = NSPasteboard.general
         guard let image = NSImage(pasteboard: board),
-              let data = image.tiffRepresentation else {
-            errorMessage = "The clipboard does not contain an image."
+              let tiffData = image.tiffRepresentation,
+              let bitmap = NSBitmapImageRep(data: tiffData),
+              let pngData = bitmap.representation(using: .png, properties: [:]) else {
+            errorMessage = "The clipboard image could not be converted to PNG."
             return
         }
-        imageData = data
+        imageData = pngData
         self.image = image
-        imageMimeType = "image/tiff"
+        imageMimeType = "image/png"
     }
 
     func chooseImage() {

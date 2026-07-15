@@ -58,6 +58,7 @@ struct LabeledEditor: View {
     let placeholder: String
     @Binding var text: String
     var font: Font = .body
+    var height: CGFloat = 125
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -68,7 +69,7 @@ struct LabeledEditor: View {
                 }
                 TextEditor(text: $text).font(font).scrollContentBackground(.hidden).padding(5)
             }
-            .frame(minHeight: 125)
+            .frame(height: height)
             .background(RoundedRectangle(cornerRadius: 12).fill(AppTheme.card))
             .overlay(RoundedRectangle(cornerRadius: 12).stroke(AppTheme.cream.opacity(0.15)))
         }
