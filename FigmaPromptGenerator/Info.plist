@@ -26,7 +26,5 @@
     <string>Use the microphone to dictate design notes.</string>
     <key>NSPrincipalClass</key>
     <string>NSApplication</string>
-    <key>NSSpeechRecognitionUsageDescription</key>
-    <string>Convert spoken design notes into text.</string>
 </dict>
 </plist>

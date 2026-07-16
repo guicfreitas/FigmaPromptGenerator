@@ -139,19 +139,22 @@ private struct GeneratorView: View {
             accessory: AnyView(
                 Button {
                     if speechTranscription.isRecording {
-                        speechTranscription.stop()
+                        Task {
+                            await speechTranscription.stopAndTranscribe(apiKey: KeychainService.readAPIKey())
+                        }
                     } else {
                         notesBeforeDictation = viewModel.notes.trimmingCharacters(in: .whitespacesAndNewlines)
                         Task { await speechTranscription.start() }
                     }
                 } label: {
                     Label(
-                        speechTranscription.isRecording ? "Stop Dictation" : "Dictate Notes",
+                        speechTranscription.isTranscribing ? "Transcribing…" : (speechTranscription.isRecording ? "Stop & Transcribe" : "Record Note"),
                         systemImage: speechTranscription.isRecording ? "stop.circle.fill" : "mic.fill"
                     )
                 }
                 .buttonStyle(.bordered)
                 .tint(speechTranscription.isRecording ? .red : AppTheme.accent)
+                .disabled(speechTranscription.isTranscribing)
             )
         )
         .onChange(of: speechTranscription.transcript) { _, transcript in

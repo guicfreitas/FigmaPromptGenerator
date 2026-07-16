@@ -1,115 +1,145 @@
 import AVFoundation
 import Combine
-import Speech
+import Foundation
 
 @MainActor
 final class SpeechTranscriptionService: NSObject, ObservableObject {
     @Published private(set) var isRecording = false
+    @Published private(set) var isTranscribing = false
     @Published private(set) var transcript = ""
     @Published private(set) var errorMessage: String?
 
-    private let audioEngine = AVAudioEngine()
-    private let recognizer = SFSpeechRecognizer(locale: .current)
-    private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
-    private var recognitionTask: SFSpeechRecognitionTask?
-    private var isStopping = false
-    private var hasInputTap = false
+    private var recorder: AVAudioRecorder?
+    private var recordingURL: URL?
 
     func start() async {
         transcript = ""
         errorMessage = nil
-        isStopping = false
+        guard await microphoneAccessGranted() else { return }
 
-        guard await requestPermissions() else { return }
-        guard let recognizer, recognizer.isAvailable else {
-            errorMessage = "Speech recognition is not available for the current system language."
-            return
+        let url = FileManager.default.temporaryDirectory
+            .appendingPathComponent("figma-note-\(UUID().uuidString)")
+            .appendingPathExtension("m4a")
+        let settings: [String: Any] = [
+            AVFormatIDKey: kAudioFormatMPEG4AAC,
+            AVSampleRateKey: 44_100,
+            AVNumberOfChannelsKey: 1,
+            AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
+        ]
+
+        do {
+            recorder = try AVAudioRecorder(url: url, settings: settings)
+            recorder?.prepareToRecord()
+            guard recorder?.record() == true else {
+                throw RecordingError.couldNotStart
+            }
+            recordingURL = url
+            isRecording = true
+        } catch {
+            errorMessage = "Could not start the microphone: \(error.localizedDescription)"
+            removeRecording()
         }
-        guard recognizer.supportsOnDeviceRecognition else {
-            errorMessage = "On-device dictation is unavailable for the current system language. Enable Dictation in System Settings and try again."
-            return
+    }
+
+    func stopAndTranscribe(apiKey: String) async {
+        guard let url = recordingURL else { return }
+        recorder?.stop()
+        recorder = nil
+        isRecording = false
+        isTranscribing = true
+        defer {
+            isTranscribing = false
+            removeRecording()
         }
 
         do {
-            let request = SFSpeechAudioBufferRecognitionRequest()
-            request.shouldReportPartialResults = true
-            request.requiresOnDeviceRecognition = true
-            recognitionRequest = request
-
-            let inputNode = audioEngine.inputNode
-            if hasInputTap {
-                inputNode.removeTap(onBus: 0)
-                hasInputTap = false
-            }
-            let format = inputNode.outputFormat(forBus: 0)
-            guard format.sampleRate > 0, format.channelCount > 0 else {
-                errorMessage = "No microphone input is available. Check your selected input device and try again."
-                recognitionRequest = nil
-                return
-            }
-            inputNode.installTap(onBus: 0, bufferSize: 1_024, format: format) { [weak request] buffer, _ in
-                request?.append(buffer)
-            }
-            hasInputTap = true
-
-            audioEngine.prepare()
-            try audioEngine.start()
-            isRecording = true
-
-            recognitionTask = recognizer.recognitionTask(with: request) { [weak self] result, error in
-                Task { @MainActor [weak self] in
-                    if let result {
-                        self?.transcript = result.bestTranscription.formattedString
-                    }
-                    if let error, self?.isStopping == false {
-                        self?.errorMessage = error.localizedDescription
-                        self?.stop()
-                    } else if result?.isFinal == true {
-                        self?.stop()
-                    }
-                }
-            }
+            transcript = try await transcribe(audioAt: url, apiKey: apiKey)
         } catch {
-            errorMessage = "Could not start the microphone: \(error.localizedDescription)"
-            stop()
+            errorMessage = error.localizedDescription
         }
     }
 
-    func stop() {
-        guard isRecording || recognitionRequest != nil else { return }
-        isStopping = true
-        audioEngine.stop()
-        if hasInputTap {
-            audioEngine.inputNode.removeTap(onBus: 0)
-            hasInputTap = false
+    private func microphoneAccessGranted() async -> Bool {
+        switch AVCaptureDevice.authorizationStatus(for: .audio) {
+        case .authorized:
+            return true
+        case .notDetermined:
+            let granted = await withCheckedContinuation { continuation in
+                AVCaptureDevice.requestAccess(for: .audio) { continuation.resume(returning: $0) }
+            }
+            if !granted {
+                errorMessage = "Allow Microphone access in System Settings to record notes."
+            }
+            return granted
+        default:
+            errorMessage = "Allow Microphone access in System Settings to record notes."
+            return false
         }
-        recognitionRequest?.endAudio()
-        recognitionTask?.cancel()
-        recognitionTask = nil
-        recognitionRequest = nil
-        isRecording = false
     }
 
-    private func requestPermissions() async -> Bool {
-        let speechAuthorized = await withCheckedContinuation { continuation in
-            SFSpeechRecognizer.requestAuthorization { status in
-                continuation.resume(returning: status == .authorized)
-            }
-        }
-        guard speechAuthorized else {
-            errorMessage = "Allow Speech Recognition in System Settings to use dictation."
-            return false
-        }
+    private func transcribe(audioAt url: URL, apiKey: String) async throws -> String {
+        guard !apiKey.isEmpty else { throw RecordingError.missingAPIKey }
+        let audioData = try Data(contentsOf: url)
+        let boundary = "Boundary-\(UUID().uuidString)"
+        var body = Data()
+        body.appendFormField(name: "model", value: "gpt-4o-mini-transcribe", boundary: boundary)
+        body.appendFile(name: "file", filename: "note.m4a", mimeType: "audio/mp4", data: audioData, boundary: boundary)
+        body.append("--\(boundary)--\r\n".data(using: .utf8)!)
 
-        let microphoneAuthorized = await withCheckedContinuation { continuation in
-            AVCaptureDevice.requestAccess(for: .audio) { granted in
-                continuation.resume(returning: granted)
+        var request = URLRequest(url: URL(string: "https://api.openai.com/v1/audio/transcriptions")!)
+        request.httpMethod = "POST"
+        request.timeoutInterval = 60
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        request.httpBody = body
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let http = response as? HTTPURLResponse else { throw RecordingError.invalidResponse }
+        guard 200..<300 ~= http.statusCode else {
+            let message = (try? JSONSerialization.jsonObject(with: data) as? [String: Any])?["error"] as? [String: Any]
+            throw RecordingError.api(message?["message"] as? String ?? "OpenAI transcription failed (\(http.statusCode)).")
+        }
+        guard let payload = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let text = payload["text"] as? String,
+              !text.isEmpty else {
+            throw RecordingError.invalidResponse
+        }
+        return text
+    }
+
+    private func removeRecording() {
+        if let recordingURL {
+            try? FileManager.default.removeItem(at: recordingURL)
+        }
+        recordingURL = nil
+    }
+
+    private enum RecordingError: LocalizedError {
+        case couldNotStart, missingAPIKey, invalidResponse, api(String)
+
+        var errorDescription: String? {
+            switch self {
+            case .couldNotStart: "The microphone could not start recording."
+            case .missingAPIKey: "Add an OpenAI API key in Settings before transcribing notes."
+            case .invalidResponse: "OpenAI returned an unreadable transcription."
+            case .api(let message): message
             }
         }
-        guard microphoneAuthorized else {
-            errorMessage = "Allow Microphone access in System Settings to use dictation."
-            return false
-        }
-        return true
+    }
+}
+
+private extension Data {
+    mutating func appendFormField(name: String, value: String, boundary: String) {
+        append("--\(boundary)\r\n".data(using: .utf8)!)
+        append("Content-Disposition: form-data; name=\"\(name)\"\r\n\r\n".data(using: .utf8)!)
+        append("\(value)\r\n".data(using: .utf8)!)
+    }
+
+    mutating func appendFile(name: String, filename: String, mimeType: String, data: Data, boundary: String) {
+        append("--\(boundary)\r\n".data(using: .utf8)!)
+        append("Content-Disposition: form-data; name=\"\(name)\"; filename=\"\(filename)\"\r\n".data(using: .utf8)!)
+        append("Content-Type: \(mimeType)\r\n\r\n".data(using: .utf8)!)
+        append(data)
+        append("\r\n".data(using: .utf8)!)
     }
 }
