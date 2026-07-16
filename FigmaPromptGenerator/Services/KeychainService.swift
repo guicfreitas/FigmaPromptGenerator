@@ -1,11 +1,17 @@
 import Foundation
 import Security
 
+@MainActor
 enum KeychainService {
     private static let service = "com.guilherme.FigmaPromptGenerator"
     private static let account = "openAIAPIKey"
+    private static let cacheKey: NSString = "openAIAPIKey"
+    private static let apiKeyCache = NSCache<NSString, NSString>()
 
     static func readAPIKey() -> String {
+        if let cachedKey = apiKeyCache.object(forKey: cacheKey) {
+            return cachedKey as String
+        }
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
@@ -16,6 +22,7 @@ enum KeychainService {
         guard SecItemCopyMatching(query as CFDictionary, &result) == errSecSuccess,
               let data = result as? Data,
               let key = String(data: data, encoding: .utf8) else { return "" }
+        apiKeyCache.setObject(key as NSString, forKey: cacheKey)
         return key
     }
 
@@ -39,6 +46,7 @@ enum KeychainService {
         } else if status != errSecSuccess {
             throw KeychainError.saveFailed(status)
         }
+        apiKeyCache.setObject(trimmedKey as NSString, forKey: cacheKey)
     }
 
     enum KeychainError: LocalizedError {

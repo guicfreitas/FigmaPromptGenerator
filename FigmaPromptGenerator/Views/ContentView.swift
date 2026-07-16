@@ -132,42 +132,38 @@ private struct GeneratorView: View {
     }
 
     private var notesEditor: some View {
-        VStack(alignment: .leading, spacing: 8) {
         LabeledEditor(
             title: "Notes",
             placeholder: "Add context, interactions, component reuse guidance…",
             text: $viewModel.notes,
             accessory: AnyView(
-                Button {
+                HStack(spacing: 8) {
                     if speechTranscription.isRecording {
-                        Task {
-                            await speechTranscription.stopAndTranscribe(apiKey: KeychainService.readAPIKey())
-                        }
-                    } else {
-                        notesBeforeDictation = viewModel.notes.trimmingCharacters(in: .whitespacesAndNewlines)
-                        Task { await speechTranscription.start() }
+                        RecordingWaveform(level: speechTranscription.audioLevel)
+                            .frame(width: 130)
+                            .transition(.opacity)
                     }
-                } label: {
-                    Label(
-                        speechTranscription.isTranscribing ? "Transcribing…" : (speechTranscription.isRecording ? "Stop & Transcribe" : "Record Note"),
-                        systemImage: speechTranscription.isRecording ? "stop.circle.fill" : "mic.fill"
-                    )
+                    Button {
+                        if speechTranscription.isRecording {
+                            Task {
+                                await speechTranscription.stopAndTranscribe(apiKey: KeychainService.readAPIKey())
+                            }
+                        } else {
+                            notesBeforeDictation = viewModel.notes.trimmingCharacters(in: .whitespacesAndNewlines)
+                            Task { await speechTranscription.start() }
+                        }
+                    } label: {
+                        Label(
+                            speechTranscription.isTranscribing ? "Transcribing…" : (speechTranscription.isRecording ? "Stop & Transcribe" : "Record Note"),
+                            systemImage: speechTranscription.isRecording ? "stop.circle.fill" : "mic.fill"
+                        )
+                    }
+                    .buttonStyle(.bordered)
+                    .tint(speechTranscription.isRecording ? .red : AppTheme.accent)
+                    .disabled(speechTranscription.isTranscribing)
                 }
-                .buttonStyle(.bordered)
-                .tint(speechTranscription.isRecording ? .red : AppTheme.accent)
-                .disabled(speechTranscription.isTranscribing)
             )
         )
-        if speechTranscription.isRecording {
-            HStack(spacing: 10) {
-                Circle().fill(.red).frame(width: 8, height: 8)
-                Text("Recording your note").font(.caption.weight(.medium))
-                RecordingWaveform(level: speechTranscription.audioLevel)
-                    .frame(maxWidth: 190)
-            }
-            .transition(.opacity.combined(with: .move(edge: .top)))
-        }
-        }
         .onChange(of: speechTranscription.transcript) { _, transcript in
             guard !transcript.isEmpty else { return }
             viewModel.notes = notesBeforeDictation.isEmpty ? transcript : "\(notesBeforeDictation)\n\(transcript)"
