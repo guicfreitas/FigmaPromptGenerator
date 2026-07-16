@@ -6,11 +6,13 @@ import Foundation
 final class SpeechTranscriptionService: NSObject, ObservableObject {
     @Published private(set) var isRecording = false
     @Published private(set) var isTranscribing = false
+    @Published private(set) var audioLevel: CGFloat = 0
     @Published private(set) var transcript = ""
     @Published private(set) var errorMessage: String?
 
     private var recorder: AVAudioRecorder?
     private var recordingURL: URL?
+    private var meterTimer: Timer?
 
     func start() async {
         transcript = ""
@@ -29,12 +31,14 @@ final class SpeechTranscriptionService: NSObject, ObservableObject {
 
         do {
             recorder = try AVAudioRecorder(url: url, settings: settings)
+            recorder?.isMeteringEnabled = true
             recorder?.prepareToRecord()
             guard recorder?.record() == true else {
                 throw RecordingError.couldNotStart
             }
             recordingURL = url
             isRecording = true
+            startMetering()
         } catch {
             errorMessage = "Could not start the microphone: \(error.localizedDescription)"
             removeRecording()
@@ -43,6 +47,7 @@ final class SpeechTranscriptionService: NSObject, ObservableObject {
 
     func stopAndTranscribe(apiKey: String) async {
         guard let url = recordingURL else { return }
+        stopMetering()
         recorder?.stop()
         recorder = nil
         isRecording = false
@@ -108,10 +113,37 @@ final class SpeechTranscriptionService: NSObject, ObservableObject {
     }
 
     private func removeRecording() {
+        stopMetering()
         if let recordingURL {
             try? FileManager.default.removeItem(at: recordingURL)
         }
         recordingURL = nil
+    }
+
+    private func startMetering() {
+        stopMetering()
+        meterTimer = Timer.scheduledTimer(withTimeInterval: 0.06, repeats: true) { [weak self] _ in
+            Task { @MainActor in
+                self?.updateAudioLevel()
+            }
+        }
+    }
+
+    private func stopMetering() {
+        meterTimer?.invalidate()
+        meterTimer = nil
+        audioLevel = 0
+    }
+
+    private func updateAudioLevel() {
+        guard let recorder, recorder.isRecording else {
+            audioLevel = 0
+            return
+        }
+        recorder.updateMeters()
+        let power = recorder.averagePower(forChannel: 0)
+        let normalized = max(0, min(1, (power + 50) / 50))
+        audioLevel = CGFloat(max(0.05, sqrt(normalized)))
     }
 
     private enum RecordingError: LocalizedError {

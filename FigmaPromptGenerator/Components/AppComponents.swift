@@ -107,3 +107,28 @@ struct MarkdownPrompt: View {
         Text(attributed).font(.body)
     }
 }
+
+struct RecordingWaveform: View {
+    let level: CGFloat
+
+    var body: some View {
+        TimelineView(.animation) { context in
+            let time = context.date.timeIntervalSinceReferenceDate
+            HStack(spacing: 3) {
+                ForEach(0..<26, id: \.self) { index in
+                    let phase = sin(time * 5 + Double(index) * 0.72)
+                    let idleHeight = 0.14 + (phase + 1) * 0.07
+                    let voiceHeight = Double(level) * (0.30 + abs(phase) * 0.70)
+                    Capsule()
+                        .fill(AppTheme.accent)
+                        .frame(width: 3, height: max(5, 36 * (idleHeight + voiceHeight)))
+                }
+            }
+            .frame(height: 40)
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal, 12)
+        }
+        .background(RoundedRectangle(cornerRadius: 10).fill(AppTheme.card))
+        .overlay(RoundedRectangle(cornerRadius: 10).stroke(.red.opacity(0.35)))
+    }
+}
