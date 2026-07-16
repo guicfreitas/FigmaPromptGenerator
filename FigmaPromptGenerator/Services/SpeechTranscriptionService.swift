@@ -25,10 +25,15 @@ final class SpeechTranscriptionService: NSObject, ObservableObject {
             errorMessage = "Speech recognition is not available for the current system language."
             return
         }
+        guard recognizer.supportsOnDeviceRecognition else {
+            errorMessage = "On-device dictation is unavailable for the current system language. Enable Dictation in System Settings and try again."
+            return
+        }
 
         do {
             let request = SFSpeechAudioBufferRecognitionRequest()
             request.shouldReportPartialResults = true
+            request.requiresOnDeviceRecognition = true
             recognitionRequest = request
 
             let inputNode = audioEngine.inputNode
