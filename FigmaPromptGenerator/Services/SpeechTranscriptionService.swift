@@ -13,6 +13,7 @@ final class SpeechTranscriptionService: NSObject, ObservableObject {
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
     private var isStopping = false
+    private var hasInputTap = false
 
     func start() async {
         transcript = ""
@@ -31,11 +32,20 @@ final class SpeechTranscriptionService: NSObject, ObservableObject {
             recognitionRequest = request
 
             let inputNode = audioEngine.inputNode
-            inputNode.removeTap(onBus: 0)
+            if hasInputTap {
+                inputNode.removeTap(onBus: 0)
+                hasInputTap = false
+            }
             let format = inputNode.outputFormat(forBus: 0)
+            guard format.sampleRate > 0, format.channelCount > 0 else {
+                errorMessage = "No microphone input is available. Check your selected input device and try again."
+                recognitionRequest = nil
+                return
+            }
             inputNode.installTap(onBus: 0, bufferSize: 1_024, format: format) { [weak request] buffer, _ in
                 request?.append(buffer)
             }
+            hasInputTap = true
 
             audioEngine.prepare()
             try audioEngine.start()
@@ -64,7 +74,10 @@ final class SpeechTranscriptionService: NSObject, ObservableObject {
         guard isRecording || recognitionRequest != nil else { return }
         isStopping = true
         audioEngine.stop()
-        audioEngine.inputNode.removeTap(onBus: 0)
+        if hasInputTap {
+            audioEngine.inputNode.removeTap(onBus: 0)
+            hasInputTap = false
+        }
         recognitionRequest?.endAudio()
         recognitionTask?.cancel()
         recognitionTask = nil
