@@ -11,6 +11,7 @@
 		522A33DCD4BA78786F4AA5CD /* FigmaPromptGeneratorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4CB322525C5A377B517BC59 /* FigmaPromptGeneratorApp.swift */; };
 		535AA1F9C49EEA7B30CC34E0 /* AppComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58B65455C867E4CD716DECB7 /* AppComponents.swift */; };
 		7A9C0AFC4518E0849F37AF88 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39115B4203D8BA3C237D7B22 /* ContentView.swift */; };
+		9842B7B152910B138D919044 /* SpeechTranscriptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50A9C5E6159938B5933EB054 /* SpeechTranscriptionService.swift */; };
 		AF3F14C5EBCB9820A5F03B35 /* PromptGeneratorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D86AC0A5FAA6DBCE18E638 /* PromptGeneratorViewModel.swift */; };
 		DF560EA29896B82A090AFC88 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7717E16AD29D3B894A8CC89B /* KeychainService.swift */; };
 		E45F7D940ADDE9C74623D73D /* PromptHistoryItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BEC5BCAE70D106DC4C8E86 /* PromptHistoryItem.swift */; };
@@ -20,6 +21,7 @@
 		08BEC5BCAE70D106DC4C8E86 /* PromptHistoryItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptHistoryItem.swift; sourceTree = "<group>"; };
 		1C67D87DE59B48F85A4E2D17 /* FigmaPromptGenerator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FigmaPromptGenerator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		39115B4203D8BA3C237D7B22 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		50A9C5E6159938B5933EB054 /* SpeechTranscriptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechTranscriptionService.swift; sourceTree = "<group>"; };
 		58B65455C867E4CD716DECB7 /* AppComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppComponents.swift; sourceTree = "<group>"; };
 		6C20AB478E7CBC1C40F720C1 /* OpenAIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIService.swift; sourceTree = "<group>"; };
 		7717E16AD29D3B894A8CC89B /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
@@ -82,6 +84,7 @@
 			children = (
 				7717E16AD29D3B894A8CC89B /* KeychainService.swift */,
 				6C20AB478E7CBC1C40F720C1 /* OpenAIService.swift */,
+				50A9C5E6159938B5933EB054 /* SpeechTranscriptionService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -170,6 +173,7 @@
 				3684A3632F5930BD4F64DAD6 /* OpenAIService.swift in Sources */,
 				AF3F14C5EBCB9820A5F03B35 /* PromptGeneratorViewModel.swift in Sources */,
 				E45F7D940ADDE9C74623D73D /* PromptHistoryItem.swift in Sources */,
+				9842B7B152910B138D919044 /* SpeechTranscriptionService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

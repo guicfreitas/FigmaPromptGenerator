@@ -68,6 +68,8 @@ private struct GeneratorView: View {
     @ObservedObject var viewModel: PromptGeneratorViewModel
     let modelContext: ModelContext
     @State private var rawText = false
+    @StateObject private var speechTranscription = SpeechTranscriptionService()
+    @State private var notesBeforeDictation = ""
 
     var body: some View {
         GeometryReader { proxy in
@@ -103,7 +105,7 @@ private struct GeneratorView: View {
             header
             ImageDropZone(viewModel: viewModel)
             LabeledEditor(title: "Figma Inspect CSS", placeholder: "Paste CSS, design tokens, or inspection output…", text: $viewModel.css, font: .system(.body, design: .monospaced), height: 240)
-            LabeledEditor(title: "Notes", placeholder: "Add context, interactions, component reuse guidance…", text: $viewModel.notes)
+            notesEditor
             Button {
                 Task { await viewModel.generate(using: modelContext) }
             } label: {
@@ -125,6 +127,40 @@ private struct GeneratorView: View {
                 .padding(12)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(RoundedRectangle(cornerRadius: 10).fill(AppTheme.card))
+            }
+        }
+    }
+
+    private var notesEditor: some View {
+        LabeledEditor(
+            title: "Notes",
+            placeholder: "Add context, interactions, component reuse guidance…",
+            text: $viewModel.notes,
+            accessory: AnyView(
+                Button {
+                    if speechTranscription.isRecording {
+                        speechTranscription.stop()
+                    } else {
+                        notesBeforeDictation = viewModel.notes.trimmingCharacters(in: .whitespacesAndNewlines)
+                        Task { await speechTranscription.start() }
+                    }
+                } label: {
+                    Label(
+                        speechTranscription.isRecording ? "Stop Dictation" : "Dictate Notes",
+                        systemImage: speechTranscription.isRecording ? "stop.circle.fill" : "mic.fill"
+                    )
+                }
+                .buttonStyle(.bordered)
+                .tint(speechTranscription.isRecording ? .red : AppTheme.accent)
+            )
+        )
+        .onChange(of: speechTranscription.transcript) { _, transcript in
+            guard !transcript.isEmpty else { return }
+            viewModel.notes = notesBeforeDictation.isEmpty ? transcript : "\(notesBeforeDictation)\n\(transcript)"
+        }
+        .onChange(of: speechTranscription.errorMessage) { _, error in
+            if let error {
+                viewModel.errorMessage = error
             }
         }
     }

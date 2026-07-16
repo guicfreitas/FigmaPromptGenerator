@@ -59,10 +59,15 @@ struct LabeledEditor: View {
     @Binding var text: String
     var font: Font = .body
     var height: CGFloat = 125
+    var accessory: AnyView? = nil
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(title).font(.headline)
+            HStack {
+                Text(title).font(.headline)
+                Spacer()
+                accessory
+            }
             ZStack(alignment: .topLeading) {
                 if text.isEmpty {
                     Text(placeholder).foregroundStyle(.tertiary).padding(.horizontal, 9).padding(.vertical, 12)
